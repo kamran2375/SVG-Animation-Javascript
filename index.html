@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="svg"></div>
+    <script>
+      const init = () => {
+        const circle = document.getElementById("circle");
+        const path = document.getElementById("path");
+        const totalLength = path.getTotalLength();
+        path.style.strokeDasharray = `${totalLength} ${totalLength}`;
+        path.style.strokeDashoffset = totalLength;
+        let now = Date.now();
+        const duration = 8000;
+        const animate = () => {
+          const percentage = (Date.now() - now) / duration;
+          const point = path.getPointAtLength(percentage * totalLength);
+          circle.setAttribute("transform", `translate(${point.x}, ${point.y})`);
+          path.style.strokeDashoffset = totalLength - totalLength * percentage;
+          if (percentage > 1) {
+            now = Date.now();
+          }
+          requestAnimationFrame(animate);
+        };
+        animate();
+      };
+
+      fetch("1.svg").then((res) => {
+        res.text().then((text) => {
+          document.getElementById("svg").innerHTML = text;
+          init();
+        });
+      });
+    </script>
+  </body>
+</html>
